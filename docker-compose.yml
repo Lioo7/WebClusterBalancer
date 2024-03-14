@@ -2,19 +2,15 @@ version: "3.8"
 
 services:
 
-  # Nginx service configuration
-  nginx:
-    build: .
-    ports:
-      - 80:80
-
   # Python-app service configuration
   app:
     build: ./python-app
     ports:
-      - 8001:8001
+      - 9000-9002:8002  # Use a range of ports for multiple instances
     volumes:
       - app-logs:/app/logs
+    deploy:
+      replicas: 3
 
   # Database service configuration
   db:
@@ -33,6 +29,16 @@ services:
       --log-error=/var/log/mysql/error.log
       --general-log=true
       --general-log-file=/var/log/mysql/general.log
+
+  # Nginx service configuration
+  nginx:
+    build: .
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
 
 volumes:
   app-logs:

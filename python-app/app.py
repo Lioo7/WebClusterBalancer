@@ -1,5 +1,6 @@
 import os
 import logging
+import socket
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 
@@ -20,8 +21,8 @@ app.logger.setLevel(logging.INFO)
 @app.route('/')
 def hello():
     app.logger.info('Endpoint accessed: /')
-    return 'Hello, World!'
+    return f"Container ID: {socket.gethostname()}"
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8002)

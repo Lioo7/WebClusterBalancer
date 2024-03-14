@@ -9,4 +9,4 @@ COPY . .
 
 CMD [ "python", "app.py" ]
 
-EXPOSE 8001
+EXPOSE 8002

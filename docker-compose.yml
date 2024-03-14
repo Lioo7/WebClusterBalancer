@@ -2,11 +2,13 @@ version: "3.8"
 
 services:
 
+  # Nginx service configuration
   nginx:
     build: .
     ports:
       - 80:80
 
+  # Python-app service configuration
   app:
     build: ./python-app
     ports:
@@ -14,15 +16,23 @@ services:
     volumes:
       - app-logs:/app/logs
 
+  # Database service configuration
   db:
     image: mysql:8.3.0
     ports:
       - 3307:3306
     volumes:
-      - db-data:/var/lib/mysql/data
+      - db-data:/var/lib/mysql
       - db-logs:/var/log/mysql
     env_file:
       - .env
+    # specifies configuration options for the MySQL container command, 
+    # including setting the error log file path, 
+    # enabling general query logging, and specifying the path for the general query log file
+    command: >
+      --log-error=/var/log/mysql/error.log
+      --general-log=true
+      --general-log-file=/var/log/mysql/general.log
 
 volumes:
   app-logs:

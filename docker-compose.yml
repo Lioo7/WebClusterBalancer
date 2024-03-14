@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+
+  nginx:
+    build: .
+    ports:
+      - 80:80
+
+  app:
+    build: ./python-app
+    ports:
+      - 8001:8001
+    volumes:
+      - app-logs:/app/logs
+
+  db:
+    image: mysql:8.3.0
+    ports:
+      - 3307:3306
+    volumes:
+      - db-data:/var/lib/mysql/data
+      - db-logs:/var/log/mysql
+    env_file:
+      - .env
+
+volumes:
+  app-logs:
+  db-data:
+  db-logs:

@@ -6,11 +6,16 @@ services:
   app:
     build: ./python-app
     ports:
-      - 9000-9002:8002  # Use a range of ports for multiple instances
+      - 9000-9002:8002  # use a range of ports for multiple instances
     volumes:
       - app-logs:/app/logs
+    env_file:
+      - .env
     deploy:
       replicas: 3
+    depends_on:
+      db:
+        condition: service_healthy
 
   # Database service configuration
   db:
@@ -25,11 +30,18 @@ services:
     # specifies configuration options for the MySQL container command, 
     # including setting the error log file path, 
     # enabling general query logging, and specifying the path for the general query log file
+    # allow remote connections
     command: >
+      --bind-address=0.0.0.0
       --log-error=/var/log/mysql/error.log
       --general-log=true
       --general-log-file=/var/log/mysql/general.log
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      
   # Nginx service configuration
   nginx:
     build: .

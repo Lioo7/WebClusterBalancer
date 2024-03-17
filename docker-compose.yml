@@ -6,7 +6,7 @@ services:
   app:
     build: ./python-app
     ports:
-      - 9000-9002:8002  # use a range of ports for multiple instances
+      - 9000-9004:8002  # range of ports for multiple instances
     volumes:
       - app-logs:/app/logs
     env_file:

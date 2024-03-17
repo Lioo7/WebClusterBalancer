@@ -5,5 +5,8 @@ if [ ! -x "$0" ]; then
     chmod +x "$0"
 fi
 
-# Scale up/down the container apps to 5
+# scale up/down the container apps to 5
 docker-compose up -d --scale app=5
+
+# restart the nginx service
+docker-compose restart nginx

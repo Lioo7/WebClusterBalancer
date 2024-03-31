@@ -30,7 +30,6 @@ services:
     env_file:
       - .env
     command: >
-      --bind-address=0.0.0.0
       --log-error=/var/log/mysql/error.log
       --general-log=true
       --general-log-file=/var/log/mysql/general.log
@@ -44,7 +43,7 @@ services:
 
   # Nginx service configuration
   nginx:
-    build: .
+    image: nginx:1.25.4
     ports:
       - 80:80
     volumes:

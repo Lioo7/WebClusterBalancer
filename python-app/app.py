@@ -35,23 +35,21 @@ def display_internal_ip():
         increment_res = db.increment_counter()
         app.logger.info(f'increment_res: {increment_res}')
 
-        # check if the internal_ip cookie already exists
-        internal_ip = request.cookies.get('internal_ip')
-        if internal_ip is None:
-            # if the cookie doesn't exist, create it with the current internal IP
-            container_id = socket.gethostname()
-            internal_ip = socket.gethostbyname(container_id)
-            response = make_response(f"Internal IP address: {internal_ip}")
-            response.set_cookie('internal_ip', internal_ip, max_age=300)  # 5 minutes
-        else:
-            # if the cookie exists, use its value for stickiness
-            response = make_response(f"Internal IP address: {internal_ip}")
+        container_id = socket.gethostname()
+        internal_ip = socket.gethostbyname(container_id)
 
         # record access log
         client_ip = request.remote_addr
         access_time = datetime.now()
         recored_res = db.record_access_log(access_time, client_ip, internal_ip)
         app.logger.info(f'recored_res: {recored_res}')
+
+        # set the session_id cookie if it doesn't exist
+        if 'internal_ip' not in request.cookies:
+            response = make_response(internal_ip)
+            response.set_cookie('internal_ip', internal_ip, max_age=300)
+        else:
+            response = make_response(internal_ip)
 
         return response
 

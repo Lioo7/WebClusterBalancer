@@ -18,9 +18,6 @@ jobs:
           cd python-app
           docker build -t python-app -f Dockerfile .
 
-      - name: Print ECR URL
-        run: echo ${{ secrets.ECR_URL }}
-
       - name: Tag Docker image
         run: |
           IMAGE_NAME=python-app
@@ -39,5 +36,9 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-          docker push ${{ secrets.ECR_URL }}/$IMAGE_NAME:latest
-          docker push ${{ secrets.ECR_URL }}/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA
+          ECR_URL=${{ secrets.ECR_URL }}
+          IMAGE_NAME=python-app
+          BRANCH=${GITHUB_REF##*/}
+          COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          docker push $ECR_URL/$IMAGE_NAME:latest
+          docker push $ECR_URL/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA

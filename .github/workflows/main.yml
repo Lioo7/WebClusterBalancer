@@ -20,11 +20,11 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          IMAGE_NAME=app
+          IMAGE_NAME=python-app
           BRANCH=main
           COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          docker tag app ${{ secrets.ECR_URL }}/$IMAGE_NAME:latest
-          docker tag app ${{ secrets.ECR_URL }}/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA
+          docker tag python-app:latest ${{ secrets.ECR_URL }}/$IMAGE_NAME:latest
+          docker tag python-app:latest ${{ secrets.ECR_URL }}/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA
 
       - name: Login to AWS ECR
         run: aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}

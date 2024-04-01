@@ -45,5 +45,5 @@ jobs:
         BRANCH=${GITHUB_REF##*/}
         COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         
-        docker push $ECR_URL/app:latest
+        docker push $ECR_URL:latest
         

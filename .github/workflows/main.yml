@@ -42,9 +42,8 @@ jobs:
     - name: Push Docker image to ECR
       run: |
         ECR_URL=${{ secrets.ECR_URL }}
-        IMAGE_NAME=app
         BRANCH=${GITHUB_REF##*/}
         COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         
-        docker push $ECR_URL:latest
-        docker push $ECR_URL/$BRANCH-$COMMIT_SHORT_SHA
+        docker push $ECR_URL/app:latest
+        

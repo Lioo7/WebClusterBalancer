@@ -1,0 +1,37 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker-compose build
+
+      - name: Tag Docker image
+        run: |
+          IMAGE_NAME=app
+          BRANCH=main
+          COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          docker tag app ${{ secrets.ECR_URL }}/$IMAGE_NAME:latest
+          docker tag app ${{ secrets.ECR_URL }}/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA
+
+      - name: Login to AWS ECR
+        run: aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-north-1
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ secrets.ECR_URL }}/$IMAGE_NAME:latest
+          docker push ${{ secrets.ECR_URL }}/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA

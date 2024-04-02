@@ -6,9 +6,10 @@ on:
       - 'main'
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
 
     - name: Checkout code
@@ -27,19 +28,18 @@ jobs:
         cd python-app
         docker build -t awsapp -f Dockerfile .
 
+    - name: Extract branch and commit information
+      run: |
+        BRANCH=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+        echo "COMMIT_SHORT_SHA=$COMMIT_SHORT_SHA" >> $GITHUB_ENV
+
     - name: Tag Docker Image (latest)
       run: docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:latest
 
     - name: Tag Docker Image (with Branch and Commit)
-      run: |
-        BRANCH=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
-        COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-        docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:$BRANCH-$COMMIT_SHORT_SHA
-
-    - name: Debug variables
-      run: |
-        echo "Branch: $BRANCH"
-        echo "Commit Short SHA: $COMMIT_SHORT_SHA"
+      run: docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:$BRANCH-$COMMIT_SHORT_SHA
 
     - name: Push Docker image to ECR
       run: |

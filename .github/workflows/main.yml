@@ -14,36 +14,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_REGISTRY_URL }}
+
     - name: Build Docker image
       run: |
         cd python-app
-        docker build -t app -f Dockerfile .
+        docker build -t awsapp -f Dockerfile .
 
-    - name: Tag Docker image
+    - name: Tag Docker Image (latest)
+      run: docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:latest
+
+    - name: Tag Docker Image (with Branch and Commit)
       run: |
-        IMAGE_NAME=app
-        BRANCH=${GITHUB_REF##*/}
+        BRANCH=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
         COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-        ECR_URL=${{ secrets.ECR_URL }}
-        
-        # Tag with 'latest'
-        docker tag app $ECR_URL/$IMAGE_NAME:latest
-        
-        # Tag with ImageName-Branch-CommitShortSha
-        docker tag app $ECR_URL/$IMAGE_NAME-$BRANCH-$COMMIT_SHORT_SHA
-
-    - name: Login to AWS ECR
-      run: aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: eu-north-1
+        docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:$BRANCH-$COMMIT_SHORT_SHA
 
     - name: Push Docker image to ECR
       run: |
-        ECR_URL=${{ secrets.ECR_URL }}
-        BRANCH=${GITHUB_REF##*/}
-        COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-        
-        docker push $ECR_URL:latest
-        
+        docker push ${{ secrets.AWS_REGISTRY_URL }}/awsapp:latest
+        docker push ${{ secrets.AWS_REGISTRY_URL }}/awsapp:$BRANCH-$COMMIT_SHORT_SHA

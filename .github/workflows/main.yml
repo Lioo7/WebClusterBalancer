@@ -36,6 +36,11 @@ jobs:
         COMMIT_SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
         docker tag awsapp:latest ${{ secrets.AWS_REGISTRY_URL }}/awsapp:$BRANCH-$COMMIT_SHORT_SHA
 
+    - name: Debug variables
+      run: |
+        echo "Branch: $BRANCH"
+        echo "Commit Short SHA: $COMMIT_SHORT_SHA"
+
     - name: Push Docker image to ECR
       run: |
         docker push ${{ secrets.AWS_REGISTRY_URL }}/awsapp:latest

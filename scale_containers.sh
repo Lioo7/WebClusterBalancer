@@ -5,8 +5,14 @@ if [ ! -x "$0" ]; then
     chmod +x "$0"
 fi
 
-# scale up/down the container apps to 5
-docker-compose up -d --scale app=5
+# Check if the number of instances is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 [number_of_instances]"
+    exit 1
+fi
 
-# restart the nginx service
+# Scale up/down the container apps
+docker-compose up -d --scale app="$1"
+
+# Restart the nginx service
 docker-compose restart nginx

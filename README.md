@@ -36,7 +36,7 @@ The application containers can be easily scaled up or down using a provided bash
 2. Navigate to the project directory:
 
     ```bash
-    cd your-repo
+    cd WebClusterBalancer
     ```
 
 3. Create a `.env` file in the root directory with the following content:

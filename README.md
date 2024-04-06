@@ -1,5 +1,12 @@
 # WebClusterBalancer
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white" alt="Nginx">
+  <img src="https://img.shields.io/badge/Flask-000000?style=flat&logo=flask&logoColor=white" alt="Flask">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white" alt="MySQL">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker">
+</p>
+
 ## Project Overview
 
 **WebClusterBalancer** is a highly scalable and resilient web application architecture that leverages Docker containerization and Nginx as a reverse proxy load balancer. The system comprises three main components:
